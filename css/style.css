@@ -1,0 +1,54 @@
+/* Sidebar Styles */
+.sidebar {
+    background-color: rgba(248, 249, 250, 0.8); /* Background dengan transparansi */
+    border-right: 1px solid #ddd;
+    height: 100vh;
+    padding: 15px;
+    position: fixed;
+    top: 0;
+    left: -250px; /* Mulai tersembunyi */
+    width: 250px;
+    transition: left 0.3s ease, opacity 0.3s ease; /* Transisi untuk left dan opacity */
+    opacity: 0; /* Mulai dengan transparansi */
+    z-index: 1000; /* Pastikan berada di atas peta */
+}
+
+/* Sidebar terlihat */
+.sidebar.visible {
+    left: 0; /* Sidebar slide in */
+    opacity: 1; /* Sidebar terlihat */
+}
+
+/* CSS untuk Tombol Sidebar */
+.sidebar-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 123, 255, 0.8); /* Tombol transparan */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1001; /* Pastikan berada di atas sidebar */
+}
+
+.sidebar-button:hover {
+    background: rgba(0, 123, 255, 1); /* Tombol dengan warna solid saat hover */
+}
+
+/* CSS untuk Container Peta */
+.map-container {
+    transition: margin-left 0.3s ease;
+    position: relative;
+    height: 100vh;
+}
+
+.map-container.shifted {
+    margin-left: 250px; /* Sesuaikan berdasarkan lebar sidebar */
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}

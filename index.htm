@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet" />
+
+    <title>Web GIS Prototype</title>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <h3>Layer Control</h3>
+      <!-- Basemap Dropdown -->
+      <div class="form-group">
+        <label for="basemap-select">Select Basemap:</label>
+        <select id="basemap-select" class="form-control">
+          <option value="osm">OpenStreetMap</option>
+          <option value="satellite">Satellite</option>
+          <option value="streets">Streets</option>
+        </select>
+      </div>
+      <!-- GeoJSON Select Dropdown -->
+      <div class="form-group">
+        <label for="geojson-select">Pilih Data Spasial:</label>
+        <select id="geojson-select" class="form-control">
+          <option value="none">None</option>
+          <option value="data/Book1_02.geojson">Data Tumbuhan</option>
+          <!-- Tambahkan opsi GeoJSON lainnya di sini -->
+        </select>
+      </div>
+      <!-- Vector Layer Checkbox List -->
+      <div
+        class="form-group"
+        id="layer-checkbox-container"
+        style="display: none"
+      >
+        <label>Pilih Jenis Tumbuhan:</label>
+        <div id="layer-checkboxes"></div>
+        <!-- Div for checkboxes -->
+      </div>
+    </div>
+
+    <!-- Button to toggle sidebar -->
+    <button id="sidebar-toggle" class="sidebar-button">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+
+    <!-- Map Container -->
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- FontAwesome for icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+  </body>
+</html>
