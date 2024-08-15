@@ -39,9 +39,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Object to hold layer groups and opacities by category
+    // Object to hold layer groups, opacities by category, and population counts
     const layerGroups = {};
     const categoryOpacities = {};
+    const categoryCounts = {};  // Object to hold counts for each type of plant
 
     // Handle GeoJSON file selection
     document.getElementById('geojson-select').addEventListener('change', function (event) {
@@ -54,9 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const layerCheckboxesDiv = document.getElementById('layer-checkboxes');
         layerCheckboxesDiv.innerHTML = '';
 
-        // Clear existing layers
+        // Clear existing layers and reset population counts
         Object.values(layerGroups).forEach(layerGroup => {
             map.removeLayer(layerGroup);
+        });
+        Object.keys(categoryCounts).forEach(category => {
+            categoryCounts[category] = 0;
         });
 
         if (selectedGeojson === 'none') {
@@ -78,9 +82,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     throw new Error('No features in GeoJSON data');
                 }
 
-                // Extract categories and create checkboxes
+                // First, count the total population per plant type
+                data.features.forEach((feature) => {
+                    if (feature.geometry.type === 'Point') {
+                        const category = feature.properties.Jenis_Tumbuhan || 'Uncategorized';
+
+                        // Increment the population count for this category
+                        if (!categoryCounts[category]) {
+                            categoryCounts[category] = 0;
+                        }
+                        categoryCounts[category]++;
+                    }
+                });
+
+                // Then, create markers and popups
                 const categories = new Set();
-                data.features.forEach((feature, index) => {
+                data.features.forEach((feature) => {
                     if (feature.geometry.type === 'Point') {
                         const [lng, lat] = feature.geometry.coordinates;
                         const category = feature.properties.Jenis_Tumbuhan || 'Uncategorized';
@@ -94,8 +111,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         const iconUrl = `images/${category.toLowerCase().replace(/ /g, '-')}-marker.png`;
                         const marker = L.marker([lat, lng], { icon: createIcon(iconUrl, categoryOpacities[category]) })
                             .bindPopup(`
-                                <strong>Properties:</strong><br>
-                                ${Object.entries(feature.properties).map(([key, value]) => `${key}: ${value}`).join('<br>')}
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped">
+                                        <tr><th>Jenis Tumbuhan:</th><td>${feature.properties.Jenis_Tumbuhan || ''}</td></tr>
+                                        <tr><th>Kategori Tumbuhan:</th><td>${feature.properties.Kategori_Tumbuhan || ''}</td></tr>
+                                        <tr><th>Kesehatan:</th><td>${feature.properties.kesehatan || ''}</td></tr>
+                                        <tr><th>Skala Perkebunan:</th><td>${feature.properties.skala_perkebunan || ''}</td></tr>
+                                        <tr><th>X:</th><td>${lng.toFixed(5)}</td></tr>
+                                        <tr><th>Y:</th><td>${lat.toFixed(5)}</td></tr>
+                                        <tr><th>Populasi:</th><td>${categoryCounts[category]}</td></tr>
+                                    </table>
+                                </div>
                             `);
 
                         // Apply the initial opacity
