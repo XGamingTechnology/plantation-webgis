@@ -8,6 +8,7 @@
     top: 0;
     left: -250px; /* Mulai tersembunyi */
     width: 250px;
+    max-width: 40%; /* Sidebar tidak lebih dari 40% lebar layar */
     transition: left 0.3s ease, opacity 0.3s ease; /* Transisi untuk left dan opacity */
     opacity: 0; /* Mulai dengan transparansi */
     z-index: 1000; /* Pastikan berada di atas peta */
@@ -51,4 +52,120 @@
 #map {
     height: 100%;
     width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Lebar sidebar yang lebih kecil untuk layar lebih kecil */
+        max-width: 35%;
+        left: -200px;
+    }
+
+    .sidebar.visible {
+        left: 0;
+    }
+
+    .map-container.shifted {
+        margin-left: 200px; /* Sesuaikan margin peta saat sidebar terlihat */
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 100%; /* Lebar sidebar memenuhi layar pada perangkat kecil */
+        left: -100%; /* Sidebar tersembunyi di luar layar secara default */
+    }
+
+    .sidebar.visible {
+        left: 0;
+    }
+
+    .map-container.shifted {
+        margin-left: 0; /* Tidak perlu margin ketika sidebar terlihat di perangkat kecil */
+    }
+
+    .sidebar-button {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        font-size: 14px;
+    }
+
+    .sidebar h3 {
+        font-size: 16px;
+    }
+
+    .sidebar label, .sidebar select, .sidebar input {
+        font-size: 12px;
+    }
+
+    .category-control img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .category-control label {
+        font-size: 12px;
+    }
+
+    .opacity-slider {
+        width: 100%;
+    }
+}
+
+/* Custom positioning for zoom control */
+@media (max-width: 576px) {
+    .leaflet-control-zoom {
+        left: auto !important;
+        right: 10px;
+        bottom: 10px;
+        top: auto !important;
+    }
+}
+
+/* Responsive Pop-up Styles */
+.leaflet-popup-content-wrapper {
+    max-width: 280px; /* Set maximum width for pop-up */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-content {
+    font-size: 14px; /* Font size adjustment for readability */
+}
+
+.leaflet-popup-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaflet-popup-content table td, 
+.leaflet-popup-content table th {
+    padding: 5px;
+    border: 1px solid #ddd;
+    word-wrap: break-word;
+}
+
+.leaflet-popup-content table tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.leaflet-popup-content table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+/* Smaller screen adjustments */
+@media (max-width: 576px) {
+    .leaflet-popup-content-wrapper {
+        max-width: 220px; /* Reduce width on small screens */
+    }
+
+    .leaflet-popup-content {
+        font-size: 12px; /* Smaller font size for mobile */
+    }
+
+    .leaflet-popup-content table td, 
+    .leaflet-popup-content table th {
+        padding: 4px;
+    }
 }

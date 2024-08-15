@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
         basemaps[selectedBasemap].addTo(map);
     });
 
+     // Pindahkan kontrol zoom ke pojok kanan bawah
+    map.zoomControl.setPosition('bottomright');
+
     // Define a function to create icons with specific opacity
     function createIcon(iconUrl, opacity) {
         return L.icon({
@@ -209,8 +212,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const mapContainer = document.querySelector('.map-container');
     const sidebarToggle = document.getElementById('sidebar-toggle');
 
-    sidebar.classList.add('visible');
-    mapContainer.classList.add('shifted');
+    // Function to check screen width and hide sidebar by default on mobile
+    function checkScreenWidth() {
+        if (window.innerWidth <= 576) {
+            sidebar.classList.remove('visible');
+            mapContainer.classList.remove('shifted');
+            sidebarToggle.innerHTML = `<i class="fas fa-chevron-right"></i>`;
+        } else {
+            sidebar.classList.add('visible');
+            mapContainer.classList.add('shifted');
+            sidebarToggle.innerHTML = `<i class="fas fa-chevron-left"></i>`;
+        }
+    }
+
+    // Run check on initial load and on window resize
+    checkScreenWidth();
+    window.addEventListener('resize', checkScreenWidth);
 
     sidebarToggle.addEventListener('click', function () {
         const isVisible = sidebar.classList.toggle('visible');
