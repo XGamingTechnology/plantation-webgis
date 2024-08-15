@@ -3,12 +3,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const map = L.map('map').setView([51.505, -0.09], 13);
 
     const basemaps = {
-        osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }),
-        satellite: L.tileLayer('https://{s}.tile.satellite.com/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.satellite.com/copyright">Satellite</a> contributors'
-        })
+        osm: L.tileLayer.provider('OpenStreetMap.Mapnik'),
+        satellite: L.tileLayer.provider('Esri.WorldImagery'),
+        topo: L.tileLayer.provider('OpenTopoMap'),
+        imagery: L.tileLayer.provider('Esri.WorldImagery'),
+        outdoors: L.tileLayer.provider('Thunderforest.Outdoors')
     };
 
     // Add default basemap
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         basemaps[selectedBasemap].addTo(map);
     });
 
-     // Pindahkan kontrol zoom ke pojok kanan bawah
+    // Pindahkan kontrol zoom ke pojok kanan bawah
     map.zoomControl.setPosition('bottomright');
 
     // Define a function to create icons with specific opacity
