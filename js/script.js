@@ -28,54 +28,20 @@ document.addEventListener('DOMContentLoaded', function () {
         basemaps[selectedBasemap].addTo(map);
     });
 
-    // Define custom icons for each category
-    const icons = {
-        'Acacia': L.icon({
-            iconUrl: 'images/acacia-marker.png',  // Gambar untuk Acacia
+    // Define a function to create icons with specific opacity
+    function createIcon(iconUrl, opacity) {
+        return L.icon({
+            iconUrl: iconUrl,
             iconSize: [32, 32],
             iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        }),
-        'Oil palm': L.icon({
-            iconUrl: 'images/oil-palm-marker.png',  // Gambar untuk Oil palm
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        }),
-        'gr-Mixture': L.icon({
-            iconUrl: 'images/gr-mixture-marker.png',  // Gambar untuk gr-Mixture
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        }),
-        'Hevea': L.icon({
-            iconUrl: 'images/hevea-marker.png',  // Gambar untuk Hevea
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        }),
-        'Coconut palm': L.icon({
-            iconUrl: 'images/coconut-palm-marker.png',  // Gambar untuk Coconut palm
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        }),
-        'Paraserianthes': L.icon({
-            iconUrl: 'images/paraserianthes-marker.png',  // Gambar untuk Paraserianthes
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        }),
-        'Uncategorized': L.icon({
-            iconUrl: 'images/default-marker.png',  // Gambar default jika kategori tidak ditemukan
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        })
-    };
-    
-    // Object to hold layer groups by category
+            popupAnchor: [0, -32],
+            className: 'custom-icon',
+        });
+    }
+
+    // Object to hold layer groups and opacities by category
     const layerGroups = {};
+    const categoryOpacities = {};
 
     // Handle GeoJSON file selection
     document.getElementById('geojson-select').addEventListener('change', function (event) {
@@ -116,36 +82,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 const categories = new Set();
                 data.features.forEach((feature, index) => {
                     if (feature.geometry.type === 'Point') {
-                        // Extract coordinates (assumed to be [longitude, latitude])
                         const [lng, lat] = feature.geometry.coordinates;
-
-                        // Determine the category of the feature
                         const category = feature.properties.Jenis_Tumbuhan || 'Uncategorized';
-
-                        // Add category to the set
                         categories.add(category);
 
-                        // Create a marker with the appropriate icon for this category
-                        const marker = L.marker([lat, lng], { icon: icons[category] || icons['Uncategorized'] })
+                        if (!layerGroups[category]) {
+                            layerGroups[category] = L.featureGroup();
+                            categoryOpacities[category] = 1; // Default opacity
+                        }
+
+                        const iconUrl = `images/${category.toLowerCase().replace(/ /g, '-')}-marker.png`;
+                        const marker = L.marker([lat, lng], { icon: createIcon(iconUrl, categoryOpacities[category]) })
                             .bindPopup(`
                                 <strong>Properties:</strong><br>
                                 ${Object.entries(feature.properties).map(([key, value]) => `${key}: ${value}`).join('<br>')}
                             `);
 
-                        // Initialize the layer group if it doesn't exist
-                        if (!layerGroups[category]) {
-                            layerGroups[category] = L.featureGroup();
-                        }
+                        // Apply the initial opacity
+                        marker.on('add', function () {
+                            const markerElement = marker.getElement();
+                            if (markerElement) {
+                                markerElement.style.opacity = categoryOpacities[category];
+                            }
+                        });
 
-                        // Add marker to the appropriate layer group
                         layerGroups[category].addLayer(marker);
-                    } else {
-                        console.log(`Feature ${index} is not a Point, type: ${feature.geometry.type}`);
                     }
                 });
 
-                // Populate checkboxes with categories
                 categories.forEach(category => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'category-control';
+
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.value = category;
@@ -156,14 +124,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     label.htmlFor = checkbox.id;
                     label.textContent = category;
 
-                    const br = document.createElement('br');
+                    const legendIcon = document.createElement('img');
+                    legendIcon.src = `images/${category.toLowerCase().replace(/ /g, '-')}-marker.png`;
+                    legendIcon.style.width = '20px';
+                    legendIcon.style.height = '20px';
+                    legendIcon.style.verticalAlign = 'middle';
+                    legendIcon.style.marginRight = '8px';
 
-                    // Add checkbox to the div
-                    layerCheckboxesDiv.appendChild(checkbox);
-                    layerCheckboxesDiv.appendChild(label);
-                    layerCheckboxesDiv.appendChild(br);
+                    const slider = document.createElement('input');
+                    slider.type = 'range';
+                    slider.className = 'opacity-slider';
+                    slider.min = '0';
+                    slider.max = '1';
+                    slider.step = '0.1';
+                    slider.value = categoryOpacities[category];
+                    slider.style.width = '100%';
 
-                    // Add event listener to handle layer visibility
                     checkbox.addEventListener('change', function () {
                         if (this.checked) {
                             map.addLayer(layerGroups[category]);
@@ -171,18 +147,31 @@ document.addEventListener('DOMContentLoaded', function () {
                             map.removeLayer(layerGroups[category]);
                         }
                     });
+
+                    slider.addEventListener('input', function () {
+                        categoryOpacities[category] = this.value;
+                        layerGroups[category].eachLayer(layer => {
+                            const markerElement = layer.getElement();
+                            if (markerElement) {
+                                markerElement.style.opacity = categoryOpacities[category];
+                            }
+                        });
+                    });
+
+                    categoryDiv.appendChild(legendIcon);
+                    categoryDiv.appendChild(checkbox);
+                    categoryDiv.appendChild(label);
+                    categoryDiv.appendChild(slider);
+                    layerCheckboxesDiv.appendChild(categoryDiv);
                 });
 
                 // Add layer groups to the map but hide them initially
                 Object.values(layerGroups).forEach(layerGroup => {
-                    map.addLayer(layerGroup); // Ensure all markers are loaded
-                    map.removeLayer(layerGroup); // Start with layers hidden
+                    map.addLayer(layerGroup);
+                    map.removeLayer(layerGroup);
                 });
 
-                // Show the checkbox container after the categories are loaded
                 document.getElementById('layer-checkbox-container').style.display = 'block';
-
-                // Set the view to include all markers
                 map.fitBounds(Object.values(layerGroups).reduce((bounds, layerGroup) => bounds.extend(layerGroup.getBounds()), L.latLngBounds([])));
             })
             .catch(error => {
@@ -190,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // Sidebar toggle functionality
     const sidebar = document.querySelector('.sidebar');
     const mapContainer = document.querySelector('.map-container');
     const sidebarToggle = document.getElementById('sidebar-toggle');
