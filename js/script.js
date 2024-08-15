@@ -30,33 +30,50 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Define custom icons for each category
     const icons = {
+        'Acacia': L.icon({
+            iconUrl: 'images/acacia-marker.png',  // Gambar untuk Acacia
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        }),
         'Oil palm': L.icon({
-            iconUrl: 'images/oil-palm-marker.png',
+            iconUrl: 'images/oil-palm-marker.png',  // Gambar untuk Oil palm
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
         }),
-        'Rubber': L.icon({
-            iconUrl: 'images/rubber-marker.png',
+        'gr-Mixture': L.icon({
+            iconUrl: 'images/gr-mixture-marker.png',  // Gambar untuk gr-Mixture
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
         }),
-        'Coconut': L.icon({
-            iconUrl: 'images/coconut-marker.png',
+        'Hevea': L.icon({
+            iconUrl: 'images/hevea-marker.png',  // Gambar untuk Hevea
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
         }),
-        // Add more icons as needed for other categories
+        'Coconut palm': L.icon({
+            iconUrl: 'images/coconut-palm-marker.png',  // Gambar untuk Coconut palm
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        }),
+        'Paraserianthes': L.icon({
+            iconUrl: 'images/paraserianthes-marker.png',  // Gambar untuk Paraserianthes
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        }),
         'Uncategorized': L.icon({
-            iconUrl: 'images/default-marker.png',
+            iconUrl: 'images/default-marker.png',  // Gambar default jika kategori tidak ditemukan
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
         })
     };
-
+    
     // Object to hold layer groups by category
     const layerGroups = {};
 
